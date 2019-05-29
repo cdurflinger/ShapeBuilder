@@ -3,12 +3,23 @@ let squareButton = document.getElementById('square');
 let circleButton = document.getElementById('circle');
 let heightSlider = document.getElementById('heightSlider');
 let widthSlider = document.getElementById('widthSlider');
+let navButton = document.getElementById('navButton');
+let navItems = document.getElementById('navItems');
 let c = canvas.getContext('2d');
 let shape = "square";
 let height = 25;
 let width = 25;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+//Responsive Nav
+navButton.addEventListener("click", function(){
+    if(navItems.style.display === "block"){
+        navItems.style.display = "none";
+    } else {
+        navItems.style.display = "block"
+    }
+})
 
 //Changes value of shape variable depending on what button is clicked. Default is square.
 
@@ -40,7 +51,7 @@ canvas.addEventListener("click", function(){
 
 function createCircle(){
     c.beginPath();
-    c.arc(event.clientX, event.clientY, 50, 0, 2 * Math.PI);
+    c.arc(event.clientX, event.clientY, width, 0, 2 * Math.PI);
     c.fillStyle = randomColor();
     c.fill();
 }
