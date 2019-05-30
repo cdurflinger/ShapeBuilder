@@ -29,6 +29,12 @@ navButton.addEventListener("click", function(){
 for(let i = 0; i < shapeButtons.length; i++){
     shapeButtons[i].addEventListener('click', function(){
         shape = this.textContent.toLowerCase();
+        this.classList.add('active');
+        for(let j = 0; j < shapeButtons.length; j++){
+            if(shapeButtons[i] !== shapeButtons[j]){
+                shapeButtons[j].classList.remove('active');
+            }
+        }
     })
 }
 
