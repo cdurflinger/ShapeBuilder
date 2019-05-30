@@ -4,31 +4,43 @@ html, body{
     height: 100vh;
     width: 100%;
     font-size: 18px;
+    font-family: 'Roboto', sans-serif;
 }
 canvas{
     display: block;
-    /* height: 80vh;
-    width: 100%; */
 }
 h1{
     margin: 0;
     padding-left: 1em;
 }
-p{
+label{
     margin: 0;
 }
 nav{
     display: flex;
     height: 8vh;
-    border-bottom: 1px solid black;
+    background: #8E2DE2;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to left, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     align-items: center;
     justify-content: space-between;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    user-select: none;
+    color: white;
+}
+button{
+    color: white;
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
 }
 #navItems{
     width: 40%;
     margin: 0;
     padding: 0;
-    background-color: lightblue;
     list-style: none;
     text-align: center;
     display: none;
@@ -36,11 +48,21 @@ nav{
     position: absolute;
     top: 8vh;
     right: 0;
+    background: #5741E1;
+
 }
 #navButton{
     text-decoration: none;
     font-size: 1.5em;
     padding-right: 1em;
+    color: white;
+}
+#shapeContainer{
+    height: 10vh;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    
 }
 .navItem{
     font-size: 1.3em;

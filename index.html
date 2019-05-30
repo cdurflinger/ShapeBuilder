@@ -4,25 +4,29 @@
         <title>Shape Drawer</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <canvas></canvas>
         <nav>
             <h1>ShapeDrawer</h1>
             <ul id="navItems">
                 <p>Select your shape</p>
-                <li><button id="square" class="navItem">Square</button></li>
-                <li><button id="circle"class="navItem">Circle</button></li>
-                <p>Height</p>
+                <li><button class="navItem">Square</button></li>
+                <li><button class="navItem">Circle</button></li>
+                <label for="heightSlider">Height</label>
                 <li><input type="range" min="1" max="100" value = "25" id="heightSlider" class="navItem"></li>
-                <p>Width/Radius</p>
+                <label for="widthSlider">Width/Radius</label>
                 <li><input type="range" min="1" max="100" value = "25" id="widthSlider" class="navItem"></li>
             </ul>
             <a href="#" id ="navButton">
             <i class="fas fa-bars"></i>
             </a>
         </nav>
-        <canvas></canvas>
+        <div id="shapeContainer">
+
+        </div>
         <script src="canvas.js"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/all.js" integrity="sha384-DJ25uNYET2XCl5ZF++U8eNxPWqcKohUUBUpKGlNLMchM7q4Wjg2CUpjHLaL8yYPH" crossorigin="anonymous"></script>
     </body>
