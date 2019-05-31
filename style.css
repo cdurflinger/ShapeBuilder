@@ -57,17 +57,23 @@ button{
     padding-right: 1em;
     color: white;
 }
-#shapeContainer{
-    height: 10vh;
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    
-}
 .navItem{
     font-size: 1.4em;
     height: 2em;
 }
 .active{
     background: #6411E1;
+}
+#shapeContainer{
+    height: auto;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+.shapeDiv{
+    height: 5vh;
+    width: 10%;
+    background: lightblue;
 }

@@ -4,10 +4,12 @@ let widthSlider = document.getElementById('widthSlider');
 let navButton = document.getElementById('navButton');
 let navItems = document.getElementById('navItems');
 let shapeButtons = document.getElementsByTagName('button');
+let shapeDivs = document.getElementsByClassName('shapeDiv');
 let c = canvas.getContext('2d');
 let shape = "square";
 let height = 25;
 let width = 25;
+let drawnShapes = [];
 
 //initialize the canvas width/height on load.
 canvas.width = window.innerWidth;
@@ -66,11 +68,34 @@ function createCircle(){
     c.arc(event.clientX, event.clientY, width, 0, 2 * Math.PI);
     c.fillStyle = randomColor();
     c.fill();
+    drawnShapes.push({x: event.clientX, y: event.clientY, w: width});
+    createDiv();
 }
 
 function createSquare(){
     c.fillStyle = randomColor();
     c.fillRect(event.clientX, event.clientY, width, height);
+    drawnShapes.push({x: event.clientX, y: event.clientY, w: width, h: height});
+    createDiv();
+}
+
+function createDiv(){
+    let div = document.createElement('div');
+    div.className = 'shapeDiv';
+    document.getElementById('shapeContainer').appendChild(div);
+    removeDiv();
+}
+
+function removeDiv(){
+    for(let i = 0; i < shapeDivs.length; i++){
+        shapeDivs[i].addEventListener('click', function(){
+            if(shapeDivs[i]){
+                document.getElementById('shapeContainer').removeChild(shapeDivs[i].firstChild);
+                c.clearRect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, drawnShapes[i].h);
+                drawnShapes.splice(i, 1);
+            }
+        })
+    }
 }
 
 function randomColor(){
