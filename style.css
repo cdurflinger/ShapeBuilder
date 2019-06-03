@@ -70,10 +70,47 @@ button{
     position: fixed;
     bottom: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse;
 }
 .shapeDiv{
+    height: 0;
+    width: 0;
+    -webkit-transition: width .5s ease-in;
+    transition: width .5s ease-in;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.shapeDivTrans{
     height: 5vh;
     width: 10%;
-    background: lightblue;
+}
+
+@media only screen and (min-width: 760px){
+    #navButton{
+        display: none;
+    }
+    #navItems{
+        display: block;
+        width: 20%;
+    }
+    #shapeContainer{
+        top: 8vh;
+        width: 5%;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+    .shapeDivTrans{
+        height: 5.11vh;
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 1040px){
+    #navItems{
+        display: block;
+        width: 15%;
+    }
+
 }

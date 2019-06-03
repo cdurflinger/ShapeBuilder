@@ -64,25 +64,35 @@ function resizeCanvas(){
 }
 
 function createCircle(){
+    let color = randomColor();
     c.beginPath();
     c.arc(event.clientX, event.clientY, width, 0, 2 * Math.PI);
-    c.fillStyle = randomColor();
+    c.fillStyle = color;
     c.fill();
     drawnShapes.push({shape: "circle", x: event.clientX, y: event.clientY, w: width});
-    createDiv();
+    createDiv(color);
 }
 
 function createSquare(){
-    c.fillStyle = randomColor();
+    let color = randomColor();
+    c.fillStyle = color;
     c.fillRect(event.clientX, event.clientY, width, height);
     drawnShapes.push({shape: "square", x: event.clientX, y: event.clientY, w: width, h: height});
-    createDiv();
+    createDiv(color);
 }
 
-function createDiv(){
+function createDiv(color){
     let div = document.createElement('div');
     div.className = 'shapeDiv';
+    div.style.background = color;
     document.getElementById('shapeContainer').appendChild(div);
+    window.getComputedStyle(div).opacity;
+    div.className += ' shapeDivTrans';
+    if(shape === "square"){
+        div.textContent = "S";
+    } else if(shape === "circle"){
+        div.textContent = "C";
+    }
     div.addEventListener('click', function(){
         clearShape(this);
     });
@@ -96,12 +106,9 @@ function clearShape(div){
                 c.clearRect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, drawnShapes[i].h);               
             } else if(drawnShapes[i].shape === "circle"){
                 document.getElementById('shapeContainer').removeChild(shapeDivs[i]);
-                c.save();
-                c.globalCompositeOperation = 'destination-out';
-                c.beginPath();
-                c.arc(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, 0, 2 * Math.PI, false);
-                c.fill();
-                c.restore();
+                // c.beginPath();
+                c.clearRect(drawnShapes[i].x - drawnShapes[i].w - 1, drawnShapes[i].y - drawnShapes[i].w - 1, drawnShapes[i].w * 2 + 2, drawnShapes[i].w * 2 + 2);
+                // c.closePath();
             }
                 drawnShapes.splice(i, 1);
         }
