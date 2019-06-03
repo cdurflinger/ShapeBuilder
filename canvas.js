@@ -68,14 +68,14 @@ function createCircle(){
     c.arc(event.clientX, event.clientY, width, 0, 2 * Math.PI);
     c.fillStyle = randomColor();
     c.fill();
-    drawnShapes.push({x: event.clientX, y: event.clientY, w: width});
+    drawnShapes.push({shape: "circle", x: event.clientX, y: event.clientY, w: width});
     createDiv();
 }
 
 function createSquare(){
     c.fillStyle = randomColor();
     c.fillRect(event.clientX, event.clientY, width, height);
-    drawnShapes.push({x: event.clientX, y: event.clientY, w: width, h: height});
+    drawnShapes.push({shape: "square", x: event.clientX, y: event.clientY, w: width, h: height});
     createDiv();
 }
 
@@ -83,18 +83,28 @@ function createDiv(){
     let div = document.createElement('div');
     div.className = 'shapeDiv';
     document.getElementById('shapeContainer').appendChild(div);
-    removeDiv();
+    div.addEventListener('click', function(){
+        clearShape(this);
+    });
 }
 
-function removeDiv(){
+function clearShape(div){
     for(let i = 0; i < shapeDivs.length; i++){
-        shapeDivs[i].addEventListener('click', function(){
-            if(shapeDivs[i]){
-                document.getElementById('shapeContainer').removeChild(shapeDivs[i].firstChild);
-                c.clearRect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, drawnShapes[i].h);
-                drawnShapes.splice(i, 1);
+        if(shapeDivs[i] === div){
+            if(drawnShapes[i].shape === "square"){
+                document.getElementById('shapeContainer').removeChild(shapeDivs[i]);
+                c.clearRect(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, drawnShapes[i].h);               
+            } else if(drawnShapes[i].shape === "circle"){
+                document.getElementById('shapeContainer').removeChild(shapeDivs[i]);
+                c.save();
+                c.globalCompositeOperation = 'destination-out';
+                c.beginPath();
+                c.arc(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, 0, 2 * Math.PI, false);
+                c.fill();
+                c.restore();
             }
-        })
+                drawnShapes.splice(i, 1);
+        }
     }
 }
 
