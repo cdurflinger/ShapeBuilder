@@ -36,6 +36,8 @@ navButton.addEventListener("click", function(){
 //Listen for the mouse to move on the canvas and call the draw function.
 canvas.addEventListener("mousemove", setOutline, false);
 
+canvas.addEventListener("mouseout", reDraw, false);
+
 //Changes value of shape variable depending on what button is clicked. Default is square.
 for(let i = 0; i < shapeButtons.length; i++){
     shapeButtons[i].addEventListener('click', function(){
@@ -166,6 +168,7 @@ function reDraw(){
     }
 }
 
+//remove all shape divs and remove all shape information from the drawnShapes array.
 function reset(){
     c.clearRect(0, 0, canvas.width, canvas.height);
     for(let i = 0; i < shapeDivs.length; i++){
@@ -189,6 +192,7 @@ function setOutline(e) {
     reDraw();
     c.fillStyle = "rgba(255,255,51,0.6)";
     if(shape === "square"){
+        c.beginPath();
         c.fillRect(event.clientX - width / 2, event.clientY - height / 2, width, height);
         c.fill();
     } else if(shape === "circle"){
