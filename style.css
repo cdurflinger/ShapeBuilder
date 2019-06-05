@@ -37,6 +37,9 @@ button{
     outline: none;
     width: 100%;
 }
+input[type="range"]{
+    width: 80%;
+}
 #navItems{
     width: 40%;
     margin: 0;
