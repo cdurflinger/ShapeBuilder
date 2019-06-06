@@ -52,12 +52,14 @@ for(let i = 0; i < shapeButtons.length; i++){
 }
 
 //listen for height/width sliders to change in value.
-heightSlider.addEventListener('change', function(){
+heightSlider.addEventListener('input', function(){
     height = this.value;
+    document.getElementById('heightNum').textContent = " " + this.value;
 })
 
-widthSlider.addEventListener('change', function(){
+widthSlider.addEventListener('input', function(){
     width = this.value;
+    document.getElementById('widthNum').textContent = " " + this.value;
 })
 
 //Create shapes based on the value of variable shape.
