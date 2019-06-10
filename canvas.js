@@ -1,14 +1,20 @@
 (function(){
 
-    const canvasSettings = {
-        canvas: document.querySelector('canvas'),
-        ctx: document.querySelector('canvas').getContext('2d'),
+    const DOM = {
         heightSlider: document.getElementById('heightSlider'),
+        heightNum: document.getElementById('heightNum'),
         widthSlider: document.getElementById('widthSlider'),
+        widthNum: document.getElementById('widthNum'),
         navButton: document.getElementById('navButton'),
         navOptions: document.getElementById('navItems'),
         shapeButtons: document.getElementsByTagName('button'),
         shapeDivs: document.getElementsByClassName('shapeDiv'),
+        shapeContainer: document.getElementById('shapeContainer'),
+        resetButton: document.getElementById('reset'),
+    }
+    const canvasSettings = {
+        canvas: document.querySelector('canvas'),
+        ctx: document.querySelector('canvas').getContext('2d'),
         currentSelectedShape: 'rectangle',
     }
     const shapeSettings = {
@@ -19,14 +25,19 @@
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = color;
-                canvasSettings.ctx.fillRect(e.clientX - shapeSettings[canvasSettings.currentSelectedShape].width / 2, e.clientY - shapeSettings[canvasSettings.currentSelectedShape].height / 2, shapeSettings[canvasSettings.currentSelectedShape].width, shapeSettings[canvasSettings.currentSelectedShape].height);
-                drawnShapes.push({shape: 'rectangle', x: e.clientX, y: e.clientY, w: shapeSettings[canvasSettings.currentSelectedShape].width, h: shapeSettings[canvasSettings.currentSelectedShape].height, c: color});
-                createDiv(color);
+                canvasSettings.ctx.fillRect(e.clientX - this.width / 2, e.clientY - this.height / 2, this.width, this.height);
+                drawnShapes.push({shape: 'rectangle', x: e.clientX, y: e.clientY, w: this.width, h: this.height, c: color});
+                divSetup(color);
             },
             reDrawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.fillRect(drawnShapes[i].x - drawnShapes[i].w / 2, drawnShapes[i].y - drawnShapes[i].h / 2, drawnShapes[i].w, drawnShapes[i].h);
+            },
+            highlightGuide: function(e){
+                canvasSettings.ctx.beginPath();
+                canvasSettings.ctx.fillRect(e.clientX - this.width / 2, e.clientY - this.height / 2, this.width, this.height);
+                canvasSettings.ctx.fill();
             },
         },
         circle: {
@@ -34,16 +45,21 @@
             drawShape: function(e){
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.arc(e.clientX, e.clientY, shapeSettings[canvasSettings.currentSelectedShape].radius, 0, 2 * Math.PI);
+                canvasSettings.ctx.arc(e.clientX, e.clientY, this.radius, 0, 2 * Math.PI);
                 canvasSettings.ctx.fillStyle = color;
                 canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'circle', x: e.clientX, y: e.clientY, w: shapeSettings[canvasSettings.currentSelectedShape].radius, c: color});
-                createDiv(color);
+                drawnShapes.push({shape: 'circle', x: e.clientX, y: e.clientY, w: this.radius, c: color});
+                divSetup(color);
             },
             reDrawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.arc(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, 0, 2 * Math.PI);
+                canvasSettings.ctx.fill();
+            },
+            highlightGuide: function(e){
+                canvasSettings.ctx.beginPath();
+                canvasSettings.ctx.arc(e.clientX, e.clientY, this.radius, 0, 2 * Math.PI);
                 canvasSettings.ctx.fill();
             },
         },
@@ -54,30 +70,36 @@
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.moveTo(e.clientX, e.clientY);
-                canvasSettings.ctx.lineTo(e.clientX - Number(shapeSettings[canvasSettings.currentSelectedShape].width), e.clientY + Number(shapeSettings[canvasSettings.currentSelectedShape].height));
-                canvasSettings.ctx.lineTo(e.clientX + Number(shapeSettings[canvasSettings.currentSelectedShape].width), e.clientY + Number(shapeSettings[canvasSettings.currentSelectedShape].height));
+                canvasSettings.ctx.lineTo(e.clientX - this.width, e.clientY + this.height);
+                canvasSettings.ctx.lineTo(e.clientX + this.width, e.clientY + this.height);
                 canvasSettings.ctx.fillStyle = color;
                 canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'triangle', x: e.clientX, y: e.clientY, w: shapeSettings[canvasSettings.currentSelectedShape].width, h: shapeSettings[canvasSettings.currentSelectedShape].height, c: color});
-                createDiv(color);
+                drawnShapes.push({shape: 'triangle', x: e.clientX, y: e.clientY, w: this.width, h: this.height, c: color});
+                divSetup(color);
             },
             reDrawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.moveTo(drawnShapes[i].x, drawnShapes[i].y);
-                canvasSettings.ctx.lineTo(Number(drawnShapes[i].x) - Number(drawnShapes[i].w), Number(drawnShapes[i].y) + Number(drawnShapes[i].h));
-                canvasSettings.ctx.lineTo(Number(drawnShapes[i].x) + Number(drawnShapes[i].w), Number(drawnShapes[i].y) + Number(drawnShapes[i].h));
+                canvasSettings.ctx.lineTo(drawnShapes[i].x - drawnShapes[i].w, drawnShapes[i].y + drawnShapes[i].h);
+                canvasSettings.ctx.lineTo(drawnShapes[i].x + drawnShapes[i].w, drawnShapes[i].y + drawnShapes[i].h);
+                canvasSettings.ctx.fill();
+            },
+            highlightGuide: function(e){
+                canvasSettings.ctx.beginPath();
+                canvasSettings.ctx.moveTo(e.clientX, e.clientY);
+                canvasSettings.ctx.lineTo(e.clientX - this.width, e.clientY + this.height);
+                canvasSettings.ctx.lineTo(e.clientX + this.width, e.clientY + this.height);
                 canvasSettings.ctx.fill();
             },
         }
     }
-    let drawnShapes = [];
+    const drawnShapes = [];
 
-    //initialize the canvas width/height on load.
     canvasSettings.canvas.width = window.innerWidth;
     canvasSettings.canvas.height = window.innerHeight;
 
-    //Listen for the window size to change. Update canvas size accordingly.
+
     window.addEventListener('resize', resizeCanvas, false);
 
     function resizeCanvas(){
@@ -87,75 +109,77 @@
     }
 
     //Responsive Nav.
-    canvasSettings.navButton.addEventListener('click', function(){
-        if(canvasSettings.navOptions.style.display === 'block'){
-            canvasSettings.navOptions.style.display = 'none';
+    DOM.navButton.addEventListener('click', function(){
+        if(DOM.navOptions.style.display === 'block'){
+            DOM.navOptions.style.display = 'none';
         } else {
-            canvasSettings.navOptions.style.display = 'block'
+            DOM.navOptions.style.display = 'block'
         }
     })
 
-    //Listen for the mouse to move on the canvas and call the draw function.
-    canvasSettings.canvas.addEventListener('mousemove', setOutline, false);
+  
+    canvasSettings.canvas.addEventListener('mousemove', setOutline);
 
-    canvasSettings.canvas.addEventListener('mouseout', reDraw, false);
+    canvasSettings.canvas.addEventListener('mouseout', reDraw);
 
-    //Changes value of shape variable depending on what button is clicked. Default is rectangle.
-    for(let i = 0; i < canvasSettings.shapeButtons.length; i++){
-        canvasSettings.shapeButtons[i].addEventListener('click', function(){
-            canvasSettings.currentSelectedShape = this.textContent.toLowerCase();
-            this.classList.add('active');
-            if(shapeSettings[canvasSettings.currentSelectedShape].radius){
-                canvasSettings.widthSlider.value = shapeSettings[canvasSettings.currentSelectedShape].radius;
-                canvasSettings.heightSlider.value = '25';
-                document.getElementById('heightNum').textContent = 'N/A';
-                document.getElementById('widthNum').textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].radius;
-            } else {
-                canvasSettings.heightSlider.value = shapeSettings[canvasSettings.currentSelectedShape].height;
-                canvasSettings.widthSlider.value = shapeSettings[canvasSettings.currentSelectedShape].width;
-                document.getElementById('heightNum').textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].height;
-                document.getElementById('widthNum').textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].width;
-            }
-            for(let j = 0; j < canvasSettings.shapeButtons.length; j++){
-                if(canvasSettings.shapeButtons[i] !== canvasSettings.shapeButtons[j]){
-                    canvasSettings.shapeButtons[j].classList.remove('active');
+    //Changes value of shape variable depending on what button is clicked. Default is rectangle per canvasSettings.currentSelectedShape.
+    for(let i = 0; i < DOM.shapeButtons.length; i++){
+        if(DOM.shapeButtons[i] !== DOM.resetButton){
+            DOM.shapeButtons[i].addEventListener('click', function(){
+                canvasSettings.currentSelectedShape = this.textContent.toLowerCase();
+                this.classList.add('active');
+                if(shapeSettings[canvasSettings.currentSelectedShape].radius){
+                    DOM.widthSlider.value = shapeSettings[canvasSettings.currentSelectedShape].radius;
+                    DOM.heightSlider.value = '25';
+                    DOM.heightNum.textContent = 'N/A';
+                    DOM.widthNum.textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].radius;
+                } else {
+                    DOM.heightSlider.value = shapeSettings[canvasSettings.currentSelectedShape].height;
+                    DOM.widthSlider.value = shapeSettings[canvasSettings.currentSelectedShape].width;
+                    DOM.heightNum.textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].height;
+                    DOM.widthNum.textContent = ' ' + shapeSettings[canvasSettings.currentSelectedShape].width;
                 }
-            }
-        })
+                for(let j = 0; j < DOM.shapeButtons.length; j++){
+                    if(DOM.shapeButtons[i] !== DOM.shapeButtons[j]){
+                        DOM.shapeButtons[j].classList.remove('active');
+                    }
+                }
+            })
+        }
     }
 
-    //listen for height/width sliders to change in value.
-    canvasSettings.heightSlider.addEventListener('input', function(){
+    DOM.heightSlider.addEventListener('input', function(){
         if(shapeSettings[canvasSettings.currentSelectedShape].height){
-            shapeSettings[canvasSettings.currentSelectedShape].height = this.value;
-            document.getElementById('heightNum').textContent = ' ' + this.value;
+            shapeSettings[canvasSettings.currentSelectedShape].height = Number(this.value);
+            DOM.heightNum.textContent = ' ' + this.value;
         } else{
-            document.getElementById('heightNum').textContent = 'N/A';
-            this.value = '25';
+            DOM.heightNum.textContent = 'N/A';
+            this.value = 25;
         }
     })
 
-    canvasSettings.widthSlider.addEventListener('input', function(){
+    DOM.widthSlider.addEventListener('input', function(){
         if(shapeSettings[canvasSettings.currentSelectedShape].radius){
-            shapeSettings[canvasSettings.currentSelectedShape].radius = this.value;
+            shapeSettings[canvasSettings.currentSelectedShape].radius = Number(this.value);
         } else {
-            shapeSettings[canvasSettings.currentSelectedShape].width = this.value;
+            shapeSettings[canvasSettings.currentSelectedShape].width = Number(this.value);
         }
-        document.getElementById('widthNum').textContent = ' ' + this.value;
+        DOM.widthNum.textContent = ' ' + this.value;
     })
 
-    //Create shapes based on the value of variable shape.
     canvasSettings.canvas.addEventListener('click', function(e){
         shapeSettings[canvasSettings.currentSelectedShape].drawShape(e);
     })
 
+    DOM.resetButton.addEventListener('click', reset);
+
     //create a div and add a click listener to that div for the newly created shape. Add a CSS transition to the
     //dynamically created div.
-    function createDiv(color){
+    function divSetup(color){
         let div = document.createElement('div');
         div.className = 'shapeDiv';
         div.style.background = color;
-        document.getElementById('shapeContainer').appendChild(div);
+        DOM.shapeContainer.appendChild(div);
         window.getComputedStyle(div).opacity;
         div.className += ' shapeDivTrans';
         div.textContent = canvasSettings.currentSelectedShape.charAt(0).toUpperCase();
@@ -167,10 +191,10 @@
 
     //remove the Div from the html as well as the shape. Remove the shape information from the drawnShapes array.
     function deleteShape(div){
-        for(let i = 0; i < canvasSettings.shapeDivs.length; i++){
-            if(canvasSettings.shapeDivs[i] === div){
+        for(let i = 0; i < DOM.shapeDivs.length; i++){
+            if(DOM.shapeDivs[i] === div){
                 drawnShapes.splice(i, 1);
-                document.getElementById('shapeContainer').removeChild(canvasSettings.shapeDivs[i]);
+                DOM.shapeContainer.removeChild(DOM.shapeDivs[i]);
                 reDraw();
             }
         }
@@ -179,7 +203,7 @@
     //Clears the canvas, loops through the existing shapeDivs and redraws the shape.
     function reDraw(){
         canvasSettings.ctx.clearRect(0, 0, canvasSettings.canvas.width, canvasSettings.canvas.height);
-        for(let i = 0; i< canvasSettings.shapeDivs.length; i++){
+        for(let i = 0; i< DOM.shapeDivs.length; i++){
             if(shapeSettings.hasOwnProperty(drawnShapes[i].shape)){
                 shapeSettings[drawnShapes[i].shape].reDrawShape(i);
             }
@@ -188,14 +212,13 @@
 
     //remove all shape divs and remove all shape information from the drawnShapes array.
     function reset(){
-        canvasSettings.ctx.clearRect(0, 0, canvasSettings.canvas.width, canvasSettings.canvas.height);
-        for(let i = 0; i < canvasSettings.shapeDivs.length; i++){
-            document.getElementById('shapeContainer').removeChild(canvasSettings.shapeDivs[i]);
-            drawnShapes.splice(i, 1);
+        for(let i = DOM.shapeDivs.length - 1; i >= 0; i--){
+            DOM.shapeContainer.removeChild(DOM.shapeDivs[i]);
         }
+        drawnShapes.splice(0, drawnShapes.length);
+        canvasSettings.ctx.clearRect(0, 0, canvasSettings.canvas.width, canvasSettings.canvas.height);
     }
 
-    //generate a random rgb color for the shapes.
     const randomColor = function() {
         const randomColNum = function() {
             return Math.floor(Math.random() * 256);
@@ -207,21 +230,6 @@
     function setOutline(e) {
         reDraw();
         canvasSettings.ctx.fillStyle = 'rgba(255,255,51,0.6)';
-        if(canvasSettings.currentSelectedShape === 'rectangle'){
-            canvasSettings.ctx.beginPath();
-            canvasSettings.ctx.fillRect(e.clientX - shapeSettings[canvasSettings.currentSelectedShape].width / 2, e.clientY - shapeSettings[canvasSettings.currentSelectedShape].height / 2, shapeSettings[canvasSettings.currentSelectedShape].width, shapeSettings[canvasSettings.currentSelectedShape].height);
-            canvasSettings.ctx.fill();
-        } else if(canvasSettings.currentSelectedShape === 'circle'){
-            canvasSettings.ctx.beginPath();
-            canvasSettings.ctx.arc(e.clientX, e.clientY, shapeSettings[canvasSettings.currentSelectedShape].radius, 0, 2 * Math.PI);
-            canvasSettings.ctx.fill();
-        } else if(canvasSettings.currentSelectedShape === 'triangle'){
-            canvasSettings.ctx.beginPath();
-            canvasSettings.ctx.moveTo(e.clientX, e.clientY);
-            canvasSettings.ctx.lineTo(e.clientX - Number(shapeSettings[canvasSettings.currentSelectedShape].width), e.clientY + Number(shapeSettings[canvasSettings.currentSelectedShape].height));
-            canvasSettings.ctx.lineTo(e.clientX + Number(shapeSettings[canvasSettings.currentSelectedShape].width), e.clientY + Number(shapeSettings[canvasSettings.currentSelectedShape].height));
-            canvasSettings.ctx.fill();
-        }
+        shapeSettings[canvasSettings.currentSelectedShape].highlightGuide(e);
     }
-
 })();
