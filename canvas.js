@@ -16,6 +16,8 @@
         canvas: document.querySelector('canvas'),
         ctx: document.querySelector('canvas').getContext('2d'),
         currentSelectedShape: 'rectangle',
+        originalHeight: window.innerHeight,
+        originalWidth: window.innerWidth,
     }
     const shapeSettings = {
         rectangle: {
@@ -25,8 +27,8 @@
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = color;
-                canvasSettings.ctx.fillRect(e.clientX - this.width / 2, e.clientY - this.height / 2, this.width, this.height);
-                drawnShapes.push({shape: 'rectangle', x: e.clientX, y: e.clientY, w: this.width, h: this.height, c: color});
+                canvasSettings.ctx.fillRect(getMousePosition(e).x - this.width / 2, getMousePosition(e).y - this.height / 2, this.width, this.height);
+                drawnShapes.push({shape: 'rectangle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.width, h: this.height, c: color});
                 divSetup(color);
             },
             reDrawShape: function(i){
@@ -36,7 +38,7 @@
             },
             highlightGuide: function(e){
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.fillRect(e.clientX - this.width / 2, e.clientY - this.height / 2, this.width, this.height);
+                canvasSettings.ctx.fillRect(getMousePosition(e).x - this.width / 2, getMousePosition(e).y - this.height / 2, this.width, this.height);
                 canvasSettings.ctx.fill();
             },
         },
@@ -45,10 +47,10 @@
             drawShape: function(e){
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.arc(e.clientX, e.clientY, this.radius, 0, 2 * Math.PI);
+                canvasSettings.ctx.arc(getMousePosition(e).x, getMousePosition(e).y, this.radius, 0, 2 * Math.PI);
                 canvasSettings.ctx.fillStyle = color;
                 canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'circle', x: e.clientX, y: e.clientY, w: this.radius, c: color});
+                drawnShapes.push({shape: 'circle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.radius, c: color});
                 divSetup(color);
             },
             reDrawShape: function(i){
@@ -59,7 +61,7 @@
             },
             highlightGuide: function(e){
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.arc(e.clientX, e.clientY, this.radius, 0, 2 * Math.PI);
+                canvasSettings.ctx.arc(getMousePosition(e).x, getMousePosition(e).y, this.radius, 0, 2 * Math.PI);
                 canvasSettings.ctx.fill();
             },
         },
@@ -69,12 +71,12 @@
             drawShape: function(e){
                 let color = randomColor();
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.moveTo(e.clientX, e.clientY);
-                canvasSettings.ctx.lineTo(e.clientX - this.width, e.clientY + this.height);
-                canvasSettings.ctx.lineTo(e.clientX + this.width, e.clientY + this.height);
+                canvasSettings.ctx.moveTo(getMousePosition(e).x, getMousePosition(e).y);
+                canvasSettings.ctx.lineTo(getMousePosition(e).x - this.width, getMousePosition(e).y + this.height);
+                canvasSettings.ctx.lineTo(getMousePosition(e).x + this.width, getMousePosition(e).y + this.height);
                 canvasSettings.ctx.fillStyle = color;
                 canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'triangle', x: e.clientX, y: e.clientY, w: this.width, h: this.height, c: color});
+                drawnShapes.push({shape: 'triangle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.width, h: this.height, c: color});
                 divSetup(color);
             },
             reDrawShape: function(i){
@@ -87,25 +89,36 @@
             },
             highlightGuide: function(e){
                 canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.moveTo(e.clientX, e.clientY);
-                canvasSettings.ctx.lineTo(e.clientX - this.width, e.clientY + this.height);
-                canvasSettings.ctx.lineTo(e.clientX + this.width, e.clientY + this.height);
+                canvasSettings.ctx.moveTo(getMousePosition(e).x, getMousePosition(e).y);
+                canvasSettings.ctx.lineTo(getMousePosition(e).x - this.width, getMousePosition(e).y + this.height);
+                canvasSettings.ctx.lineTo(getMousePosition(e).x + this.width, getMousePosition(e).y + this.height);
                 canvasSettings.ctx.fill();
             },
         }
     }
     const drawnShapes = [];
+    const translateX = Math.floor((window.innerWidth - (canvasSettings.originalWidth * (window.innerWidth / canvasSettings.originalWidth))) / 2);
+    const translateY = Math.floor((window.innerHeight - (canvasSettings.originalHeight * (window.innerWidth / canvasSettings.originalWidth))) / 2);
 
     canvasSettings.canvas.width = window.innerWidth;
     canvasSettings.canvas.height = window.innerHeight;
 
 
-    window.addEventListener('resize', resizeCanvas, false);
+    window.addEventListener('resize', resizeCanvas);
 
     function resizeCanvas(){
+        const scale = window.innerWidth / canvasSettings.originalWidth;
         canvasSettings.canvas.width = window.innerWidth;
         canvasSettings.canvas.height = window.innerHeight;
-        reset();
+        canvasSettings.ctx.scale(scale, scale);
+        reDraw();
+    }
+    function getMousePosition(e) {
+        const rect = canvasSettings.canvas.getBoundingClientRect();
+        return {
+        x: (e.clientX - rect.left - translateX) / (window.innerWidth / canvasSettings.originalWidth),
+        y: (e.clientY - rect.top - translateY) / (window.innerWidth / canvasSettings.originalWidth)
+        };
     }
 
     //Responsive Nav.
@@ -228,6 +241,7 @@
 
     //create a transparent shape to show user where the placed shape will land.
     function setOutline(e) {
+        canvasSettings.ctx.restore();
         reDraw();
         canvasSettings.ctx.fillStyle = 'rgba(255,255,51,0.6)';
         shapeSettings[canvasSettings.currentSelectedShape].highlightGuide(e);

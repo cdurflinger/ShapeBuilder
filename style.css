@@ -5,6 +5,7 @@ html, body{
     width: 100%;
     font-size: 18px;
     font-family: 'Roboto', sans-serif;
+    overflow: hidden;
 }
 canvas{
     display: block;
