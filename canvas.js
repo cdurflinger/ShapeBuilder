@@ -97,6 +97,7 @@
         }
     }
     const drawnShapes = [];
+    //translate positions used for canvas scaling
     const translateX = Math.floor((window.innerWidth - (canvasSettings.originalWidth * (window.innerWidth / canvasSettings.originalWidth))) / 2);
     const translateY = Math.floor((window.innerHeight - (canvasSettings.originalHeight * (window.innerWidth / canvasSettings.originalWidth))) / 2);
 
