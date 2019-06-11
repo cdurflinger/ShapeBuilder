@@ -202,7 +202,6 @@
         });
     }
 
-    //remove the Div from the html as well as the shape. Remove the shape information from the drawnShapes array.
     function deleteShape(div){
         for(let i = 0; i < DOM.shapeDivs.length; i++){
             if(DOM.shapeDivs[i] === div){
@@ -213,9 +212,9 @@
         }
     }
 
-    //Clears the canvas, loops through the existing shapeDivs and redraws the shape.
+    //Clears the canvas, X and Y values were modified here to correct reDraw after scaling***
     function reDraw(){
-        canvasSettings.ctx.clearRect(0, 0, canvasSettings.canvas.width, canvasSettings.canvas.height);
+        canvasSettings.ctx.clearRect(0, 0, (window.innerWidth * canvasSettings.originalWidth), (window.innerWidth * canvasSettings.originalWidth));
         for(let i = 0; i< DOM.shapeDivs.length; i++){
             if(shapeSettings.hasOwnProperty(drawnShapes[i].shape)){
                 shapeSettings[drawnShapes[i].shape].reDrawShape(i);
@@ -223,7 +222,7 @@
         }
     }
 
-    //remove all shape divs and remove all shape information from the drawnShapes array.
+    //remove all shape divs in reverse order to avoid missing elements in loop
     function reset(){
         for(let i = DOM.shapeDivs.length - 1; i >= 0; i--){
             DOM.shapeContainer.removeChild(DOM.shapeDivs[i]);
@@ -241,7 +240,6 @@
 
     //create a transparent shape to show user where the placed shape will land.
     function setOutline(e) {
-        canvasSettings.ctx.restore();
         reDraw();
         canvasSettings.ctx.fillStyle = 'rgba(255,255,51,0.6)';
         shapeSettings[canvasSettings.currentSelectedShape].highlightGuide(e);
