@@ -23,15 +23,7 @@
         rectangle: {
             width: 25,
             height: 25,
-            drawShape: function(e){
-                let color = randomColor();
-                canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.fillStyle = color;
-                canvasSettings.ctx.fillRect(getMousePosition(e).x - this.width / 2, getMousePosition(e).y - this.height / 2, this.width, this.height);
-                drawnShapes.push({shape: 'rectangle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.width, h: this.height, c: color});
-                divSetup(color);
-            },
-            reDrawShape: function(i){
+            drawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.fillRect(drawnShapes[i].x - drawnShapes[i].w / 2, drawnShapes[i].y - drawnShapes[i].h / 2, drawnShapes[i].w, drawnShapes[i].h);
@@ -44,16 +36,7 @@
         },
         circle: {
             radius: 25,
-            drawShape: function(e){
-                let color = randomColor();
-                canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.arc(getMousePosition(e).x, getMousePosition(e).y, this.radius, 0, 2 * Math.PI);
-                canvasSettings.ctx.fillStyle = color;
-                canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'circle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.radius, c: color});
-                divSetup(color);
-            },
-            reDrawShape: function(i){
+            drawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.arc(drawnShapes[i].x, drawnShapes[i].y, drawnShapes[i].w, 0, 2 * Math.PI);
@@ -68,18 +51,7 @@
         triangle: {
             width: 25,
             height: 25,
-            drawShape: function(e){
-                let color = randomColor();
-                canvasSettings.ctx.beginPath();
-                canvasSettings.ctx.moveTo(getMousePosition(e).x, getMousePosition(e).y);
-                canvasSettings.ctx.lineTo(getMousePosition(e).x - this.width, getMousePosition(e).y + this.height);
-                canvasSettings.ctx.lineTo(getMousePosition(e).x + this.width, getMousePosition(e).y + this.height);
-                canvasSettings.ctx.fillStyle = color;
-                canvasSettings.ctx.fill();
-                drawnShapes.push({shape: 'triangle', x: getMousePosition(e).x, y: getMousePosition(e).y, w: this.width, h: this.height, c: color});
-                divSetup(color);
-            },
-            reDrawShape: function(i){
+            drawShape: function(i){
                 canvasSettings.ctx.beginPath();
                 canvasSettings.ctx.fillStyle = drawnShapes[i].c;
                 canvasSettings.ctx.moveTo(drawnShapes[i].x, drawnShapes[i].y);
@@ -112,7 +84,7 @@
         canvasSettings.canvas.width = window.innerWidth;
         canvasSettings.canvas.height = window.innerHeight;
         canvasSettings.ctx.scale(scale, scale);
-        reDraw();
+        draw();
     }
     function getMousePosition(e) {
         const rect = canvasSettings.canvas.getBoundingClientRect();
@@ -134,7 +106,7 @@
   
     canvasSettings.canvas.addEventListener('mousemove', setOutline);
 
-    canvasSettings.canvas.addEventListener('mouseout', reDraw);
+    canvasSettings.canvas.addEventListener('mouseout', draw);
 
     //Changes value of shape variable depending on what button is clicked. Default is rectangle per canvasSettings.currentSelectedShape.
     for(let i = 0; i < DOM.shapeButtons.length; i++){
@@ -182,7 +154,14 @@
     })
 
     canvasSettings.canvas.addEventListener('click', function(e){
-        shapeSettings[canvasSettings.currentSelectedShape].drawShape(e);
+        let color = randomColor();
+        if(shapeSettings[canvasSettings.currentSelectedShape].radius){
+            drawnShapes.push({shape: canvasSettings.currentSelectedShape, x: getMousePosition(e).x, y: getMousePosition(e).y, w: shapeSettings[canvasSettings.currentSelectedShape].radius, c: color});
+        } else{
+            drawnShapes.push({shape: canvasSettings.currentSelectedShape, x: getMousePosition(e).x, y: getMousePosition(e).y, w: shapeSettings[canvasSettings.currentSelectedShape].width, h: shapeSettings[canvasSettings.currentSelectedShape].height, c: color});
+        }
+        divSetup(color);
+        draw();
     })
 
     DOM.resetButton.addEventListener('click', reset);
@@ -199,7 +178,7 @@
         div.textContent = canvasSettings.currentSelectedShape.charAt(0).toUpperCase();
         div.addEventListener('click', function(){
             deleteShape(this);
-            reDraw();
+            draw();
         });
     }
 
@@ -208,17 +187,17 @@
             if(DOM.shapeDivs[i] === div){
                 drawnShapes.splice(i, 1);
                 DOM.shapeContainer.removeChild(DOM.shapeDivs[i]);
-                reDraw();
+                draw();
             }
         }
     }
 
-    //Clears the canvas, X and Y values were modified here to correct reDraw after scaling***
-    function reDraw(){
+    //Clears the canvas, X and Y values were modified here to correct draw after scaling***
+    function draw(){
         canvasSettings.ctx.clearRect(0, 0, (window.innerWidth * canvasSettings.originalWidth), (window.innerWidth * canvasSettings.originalWidth));
         for(let i = 0; i< DOM.shapeDivs.length; i++){
             if(shapeSettings.hasOwnProperty(drawnShapes[i].shape)){
-                shapeSettings[drawnShapes[i].shape].reDrawShape(i);
+                shapeSettings[drawnShapes[i].shape].drawShape(i);
             }
         }
     }
@@ -241,7 +220,7 @@
 
     //create a transparent shape to show user where the placed shape will land.
     function setOutline(e) {
-        reDraw();
+        draw();
         canvasSettings.ctx.fillStyle = 'rgba(255,255,51,0.6)';
         shapeSettings[canvasSettings.currentSelectedShape].highlightGuide(e);
     }
